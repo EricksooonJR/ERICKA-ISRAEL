@@ -237,23 +237,31 @@ const codigosPermitidos = {
     }
   });
 
-  asistenciaSelect.addEventListener("change", () => {
-    const valor = asistenciaSelect.value;
+ asistenciaSelect.addEventListener("change", () => {
+  const valor = asistenciaSelect.value;
 
-    if (valor === "No") {
-      grupoAsistentes.style.display = "none";
-      grupoNinos.style.display = "none";
-      asistentesSelect.value = "";
-      ninosSelect.value = "";
-    } else {
-      grupoAsistentes.style.display = "flex";
-      const codigo = codigoInput.value.trim().toUpperCase();
-      const permisos = codigosPermitidos[codigo];
-      if (permisos && permisos.ninos > 0) {
-        grupoNinos.style.display = "flex";
-      }
+  if (valor === "No") {
+    grupoAsistentes.style.display = "none";
+    grupoNinos.style.display = "none";
+    asistentesSelect.value = "";
+    ninosSelect.value = "";
+
+    // Eliminar required si no van
+    asistentesSelect.required = false;
+    ninosSelect.required = false;
+  } else {
+    grupoAsistentes.style.display = "flex";
+    asistentesSelect.required = true;
+
+    const codigo = codigoInput.value.trim().toUpperCase();
+    const permisos = codigosPermitidos[codigo];
+
+    if (permisos && permisos.ninos > 0) {
+      grupoNinos.style.display = "flex";
+      ninosSelect.required = true;
     }
-  });
+  }
+});
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -277,6 +285,8 @@ const codigosPermitidos = {
           grupoNinos.style.display = "none";
           ninosSelect.required = false;
           msg.style.display = "block";
+          asistentesSelect.required = true;
+ninosSelect.required = false;
           setTimeout(() => (msg.style.display = "none"), 5000);
         } else {
           alert("Hubo un error al enviar el formulario.");
