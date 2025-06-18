@@ -1,3 +1,6 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+
 (function ($) {
     "use strict";
 
@@ -248,3 +251,4 @@ ninosSelect.required = false; // <---
 });
 })(jQuery);
 
+});
