@@ -10,7 +10,7 @@
         }
     });
   // Establece la fecha y hora del evento (formato: Año, Mes - 1, Día, Hora, Minuto, Segundo)
-  var fechaEvento = new Date(2025, 6, 26, 19, 45, 0); // 15 de junio de 2025 a las 18:00
+  var fechaEvento = new Date(2025, 6, 26, 18, 45, 0); // 15 de junio de 2025 a las 18:00
 
   function actualizarContador() {
     var ahora = new Date();
@@ -55,21 +55,31 @@
 
 
     // Modal Video
-    $(document).ready(function () {
-        var $videoSrc;
-        $('.btn-play').click(function () {
-            $videoSrc = $(this).data("src");
-        });
-        console.log($videoSrc);
+$(document).ready(function () {
+  var $videoSrc;
 
-        $('#videoModal').on('shown.bs.modal', function (e) {
-            $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
-        })
+  $('.btn-play').click(function () {
+    $videoSrc = $(this).data("src");
+    // Guarda la fuente y la aplica al abrir
+    $('#videoModal').data('video-src', $videoSrc);
+  });
 
-        $('#videoModal').on('hide.bs.modal', function (e) {
-            $("#video").attr('src', $videoSrc);
-        })
-    });
+  $('#videoModal').on('shown.bs.modal', function () {
+    var src = $(this).data('video-src');
+    var video = $("#video")[0];
+    $("#video source").attr('src', src);
+    video.load();
+    video.play();
+  });
+
+  $('#videoModal').on('hide.bs.modal', function () {
+    var video = $("#video")[0];
+    video.pause();
+    video.currentTime = 0;
+    $("#video source").attr('src', '');
+    video.load(); // evita que quede congelado o sin control al reabrir
+  });
+});
 
 
     // Scroll to Bottom
@@ -148,58 +158,93 @@
 
 
      // Diccionario con los códigos válidos y su límite de asistentes
-  const codigosPermitidos = {
-    "FAM001": 3,
-    "FAM002": 2,
-    "INV001": 1,
-    "VIP123": 4
-  };
+const codigosPermitidos = {
+  "FAM001": { adultos: 3, ninos: 2 },
+  "FAM002": { adultos: 4, ninos: 0 },
+  "INVINE1": { adultos: 1, ninos: 0 },
+  "PAD001": { adultos: 6, ninos: 4 }
+};
 
   const codigoInput = document.getElementById("codigo");
   const asistentesSelect = document.getElementById("asistentes");
+const ninosSelect = document.getElementById("ninos");
+const ninosGroup = ninosSelect.closest(".form-row"); // Asegúrate que esté dentro de un form-row
 
-  codigoInput.addEventListener("blur", () => {
-    const codigo = codigoInput.value.trim().toUpperCase();
-    const limite = codigosPermitidos[codigo];
+// Oculta el campo de niños por defecto
+ninosGroup.style.display = "none";
 
-    asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+codigoInput.addEventListener("blur", () => {
+  const codigo = codigoInput.value.trim().toUpperCase();
+  const permisos = codigosPermitidos[codigo];
 
-    if (limite) {
-      for (let i = 1; i <= limite; i++) {
-        asistentesSelect.innerHTML += `<option value="${i}">${i}</option>`;
-      }
-    } else {
-      alert("Código inválido. Por favor verifica tu invitación.");
+  asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+  ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+
+  if (permisos) {
+    // Adultos
+    for (let i = 1; i <= permisos.adultos; i++) {
+      asistentesSelect.innerHTML += `<option value="${i}">${i}</option>`;
     }
-  });
+
+    // Niños
+if (permisos.ninos > 0) {
+  ninosGroup.style.display = "flex";
+  ninosSelect.required = true;
+  for (let i = 0; i <= permisos.ninos; i++) {
+    ninosSelect.innerHTML += `<option value="${i}">${i}</option>`;
+  }
+} else {
+  ninosGroup.style.display = "none";
+  ninosSelect.value = "";
+  ninosSelect.required = false;  // <--- Desactiva la validación
+}
+  } else {
+    alert("Código inválido. Por favor verifica tu invitación.");
+    asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+    ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+    ninosGroup.style.display = "none";
+    ninosSelect.value = "";
+  }
+});
 
   // Envío del formulario
   const form = document.getElementById("rsvp-form");
   const msg = document.getElementById("success-msg");
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+    form.addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const data = new FormData(form);
-    fetch("https://script.google.com/macros/s/AKfycbxpNhBdwM5cuZ37LbFWJJi-8wzL1VmkPWaQFPKVDUucb7plRqoXaX0UsN4WeAJwIBR_FQ/exec", {
-      method: "POST",
-      body: data,
+  // Normalizamos el código de invitación
+  const codigo = codigoInput.value.trim().toUpperCase();
+
+  // Validamos que exista en el diccionario
+  if (!(codigo in codigosPermitidos)) {
+    alert("Código inválido. No puedes enviar el formulario.");
+    return;
+  }
+
+  const data = new FormData(form);
+  fetch("https://script.google.com/macros/s/AKfycbxhxnSlnA9WYBT40gfVj5PN8xzutRE7ye7fLVdvfzaIoOh3NWqxXFEG6cn7yZ-jMsM_zA/exec", {
+    method: "POST",
+    body: data,
+  })
+    .then(response => {
+      if (response.ok) {
+      form.reset();
+asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+ninosGroup.style.display = "none";
+ninosSelect.required = false; // <---
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 5000);
+      } else {
+        alert("Hubo un error al enviar el formulario.");
+      }
     })
-      .then(response => {
-        if (response.ok) {
-          form.reset();
-          asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
-          msg.style.display = "block";
-          setTimeout(() => (msg.style.display = "none"), 5000);
-        } else {
-          alert("Hubo un error al enviar el formulario.");
-        }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("Error al conectar con el servidor.");
-      });
-  });
-    
+    .catch(error => {
+      console.error("Error:", error);
+      alert("Error al conectar con el servidor.");
+    });
+});
 })(jQuery);
 
