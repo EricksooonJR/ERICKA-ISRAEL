@@ -61,26 +61,33 @@ document.addEventListener("DOMContentLoaded", function () {
 $(document).ready(function () {
   var $videoSrc;
 
+  // Al dar clic en el botón
   $('.btn-play').click(function () {
     $videoSrc = $(this).data("src");
-    // Guarda la fuente y la aplica al abrir
-    $('#videoModal').data('video-src', $videoSrc);
+    
   });
 
+  // Al abrir el modal
   $('#videoModal').on('shown.bs.modal', function () {
     var src = $(this).data('video-src');
     var video = $("#video")[0];
+
+    // Asignar src SIEMPRE para forzar recarga
     $("#video source").attr('src', src);
-    video.load();
+    video.load(); // Fuerza recarga del video
     video.play();
   });
 
+  // Al cerrar el modal (sea manual o automático)
   $('#videoModal').on('hide.bs.modal', function () {
     var video = $("#video")[0];
     video.pause();
     video.currentTime = 0;
-    $("#video source").attr('src', '');
-    video.load(); // evita que quede congelado o sin control al reabrir
+  });
+
+  // Al terminar el video, cerrar el modal
+  $("#video").on("ended", function () {
+    $('#videoModal').modal('hide');
   });
 });
 
