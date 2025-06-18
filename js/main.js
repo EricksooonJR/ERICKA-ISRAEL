@@ -162,10 +162,28 @@ $(document).ready(function () {
 
      // Diccionario con los códigos válidos y su límite de asistentes
 const codigosPermitidos = {
-  "FAM001": { adultos: 3, ninos: 2 },
-  "FAM002": { adultos: 4, ninos: 0 },
-  "INVINE1": { adultos: 1, ninos: 0 },
-  "PAD001": { adultos: 6, ninos: 4 }
+  "INE11": { adultos: 1, ninos: 0 },
+  "INE12": { adultos: 2, ninos: 0 },
+  "INV11": { adultos: 1, ninos: 0 },
+  "INV12": { adultos: 2, ninos: 0 },  
+  "INV13": { adultos: 3, ninos: 0 },
+  "INV14": { adultos: 4, ninos: 0 },
+  "INV15": { adultos: 5, ninos: 0 },
+  "INV17": { adultos: 7, ninos: 0 },
+  "INVN21": { adultos: 2, ninos: 1 },
+  "INVN22": { adultos: 2, ninos: 2 },
+  "INVN31": { adultos: 3, ninos: 1 },
+  "INVN33": { adultos: 3, ninos: 3 },
+  "INVN42": { adultos: 4, ninos: 2 },
+  "VIP12": { adultos: 2, ninos: 0 },
+  "VIP13": { adultos: 3, ninos: 0 },
+  "VIP14": { adultos: 4, ninos: 0 },
+  "VIP16": { adultos: 6, ninos: 0 },
+  "VIP17": { adultos: 7, ninos: 0 },
+  "VIPN21": { adultos: 2, ninos: 1 },
+  "VIPN41": { adultos: 4, ninos: 1 },
+  "VIPN51": { adultos: 5, ninos: 1 },
+  "VIPN22": { adultos: 2, ninos: 2 }
 };
 
   const codigoInput = document.getElementById("codigo");
