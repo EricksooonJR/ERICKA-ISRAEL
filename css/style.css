@@ -9573,6 +9573,8 @@ a.text-dark:hover, a.text-dark:focus {
   background: #793707;
 }
 
+
+
 .btn-play {
   position: relative;
   margin-top: 50px;
@@ -9657,13 +9659,19 @@ a.text-dark:hover, a.text-dark:focus {
   height: 30px;
   right: 0px;
   top: -30px;
-  z-index: 999;
+  z-index:999;
   font-size: 30px;
   font-weight: normal;
   color: #ffffff;
   background: #000000;
   opacity: 1;
 }
+#videoModal .modal-content {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 
 .timeline .row {
   position: relative;
