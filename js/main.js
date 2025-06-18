@@ -195,85 +195,98 @@ const codigosPermitidos = {
 
   const codigoInput = document.getElementById("codigo");
   const asistentesSelect = document.getElementById("asistentes");
-const ninosSelect = document.getElementById("ninos");
-const ninosGroup = ninosSelect.closest(".form-row"); // Asegúrate que esté dentro de un form-row
+  const ninosSelect = document.getElementById("ninos");
+  const asistenciaSelect = document.getElementById("asistencia");
 
-// Oculta el campo de niños por defecto
-ninosGroup.style.display = "none";
+  const grupoAsistentes = document.getElementById("asistentes");
+  const grupoNinos = document.getElementById("grupo-ninos");
+  const msg = document.getElementById("success-msg");
+  const form = document.getElementById("rsvp-form");
 
-codigoInput.addEventListener("blur", () => {
-  const codigo = codigoInput.value.trim().toUpperCase();
-  const permisos = codigosPermitidos[codigo];
+  grupoNinos.style.display = "none";
 
-  asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
-  ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+  codigoInput.addEventListener("blur", () => {
+    const codigo = codigoInput.value.trim().toUpperCase();
+    const permisos = codigosPermitidos[codigo];
 
-  if (permisos) {
-    // Adultos
-    for (let i = 1; i <= permisos.adultos; i++) {
-      asistentesSelect.innerHTML += `<option value="${i}">${i}</option>`;
-    }
-
-    // Niños
-if (permisos.ninos > 0) {
-  ninosGroup.style.display = "flex";
-  ninosSelect.required = true;
-  for (let i = 0; i <= permisos.ninos; i++) {
-    ninosSelect.innerHTML += `<option value="${i}">${i}</option>`;
-  }
-} else {
-  ninosGroup.style.display = "none";
-  ninosSelect.value = "";
-  ninosSelect.required = false;  // <--- Desactiva la validación
-}
-  } else {
-    alert("Código inválido. Por favor verifica tu invitación.");
     asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
     ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
-    ninosGroup.style.display = "none";
-    ninosSelect.value = "";
-  }
-});
 
-  // Envío del formulario
-  const form = document.getElementById("rsvp-form");
-  const msg = document.getElementById("success-msg");
-
-    form.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  // Normalizamos el código de invitación
-  const codigo = codigoInput.value.trim().toUpperCase();
-
-  // Validamos que exista en el diccionario
-  if (!(codigo in codigosPermitidos)) {
-    alert("Código inválido. No puedes enviar el formulario.");
-    return;
-  }
-
-  const data = new FormData(form);
-  fetch("https://script.google.com/macros/s/AKfycbxhxnSlnA9WYBT40gfVj5PN8xzutRE7ye7fLVdvfzaIoOh3NWqxXFEG6cn7yZ-jMsM_zA/exec", {
-    method: "POST",
-    body: data,
-  })
-    .then(response => {
-      if (response.ok) {
-      form.reset();
-asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
-ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
-ninosGroup.style.display = "none";
-ninosSelect.required = false; // <---
-        msg.style.display = "block";
-        setTimeout(() => (msg.style.display = "none"), 5000);
-      } else {
-        alert("Hubo un error al enviar el formulario.");
+    if (permisos) {
+      for (let i = 1; i <= permisos.adultos; i++) {
+        asistentesSelect.innerHTML += `<option value="${i}">${i}</option>`;
       }
+
+      if (permisos.ninos > 0) {
+        grupoNinos.style.display = "flex";
+        ninosSelect.required = true;
+        for (let i = 0; i <= permisos.ninos; i++) {
+          ninosSelect.innerHTML += `<option value="${i}">${i}</option>`;
+        }
+      } else {
+        grupoNinos.style.display = "none";
+        ninosSelect.required = false;
+        ninosSelect.value = "";
+      }
+    } else {
+      alert("Código inválido. Por favor verifica tu invitación.");
+      asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+      ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+      grupoNinos.style.display = "none";
+      ninosSelect.required = false;
+    }
+  });
+
+  asistenciaSelect.addEventListener("change", () => {
+    const valor = asistenciaSelect.value;
+
+    if (valor === "No") {
+      grupoAsistentes.style.display = "none";
+      grupoNinos.style.display = "none";
+      asistentesSelect.value = "";
+      ninosSelect.value = "";
+    } else {
+      grupoAsistentes.style.display = "flex";
+      const codigo = codigoInput.value.trim().toUpperCase();
+      const permisos = codigosPermitidos[codigo];
+      if (permisos && permisos.ninos > 0) {
+        grupoNinos.style.display = "flex";
+      }
+    }
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const codigo = codigoInput.value.trim().toUpperCase();
+    if (!codigosPermitidos[codigo]) {
+      alert("Código inválido. No puedes enviar el formulario.");
+      return;
+    }
+
+    const data = new FormData(form);
+    fetch("https://script.google.com/macros/s/AKfycbxhxnSlnA9WYBT40gfVj5PN8xzutRE7ye7fLVdvfzaIoOh3NWqxXFEG6cn7yZ-jMsM_zA/exec", {
+      method: "POST",
+      body: data,
     })
-    .catch(error => {
-      console.error("Error:", error);
-      alert("Error al conectar con el servidor.");
-    });
-});
+      .then((response) => {
+        if (response.ok) {
+          form.reset();
+          asistentesSelect.innerHTML = '<option value="">Número de Asistentes</option>';
+          ninosSelect.innerHTML = '<option value="">Número de Niños</option>';
+          grupoNinos.style.display = "none";
+          ninosSelect.required = false;
+          msg.style.display = "block";
+          setTimeout(() => (msg.style.display = "none"), 5000);
+        } else {
+          alert("Hubo un error al enviar el formulario.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Error al conectar con el servidor.");
+      });
+  });
 })(jQuery);
 
 });
