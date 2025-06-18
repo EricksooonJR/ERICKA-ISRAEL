@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
   // Establece la fecha y hora del evento (formato: Año, Mes - 1, Día, Hora, Minuto, Segundo)
-  var fechaEvento = new Date(2025, 5, 18, 14, 47, 0); // 15 de junio de 2025 a las 18:00
+  var fechaEvento = new Date(2025, 6, 26, 18, 45, 0); // 15 de junio de 2025 a las 18:00
 
   function actualizarContador() {
     var ahora = new Date();
