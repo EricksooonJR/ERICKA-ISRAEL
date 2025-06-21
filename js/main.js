@@ -171,6 +171,7 @@ $(document).ready(function () {
 const codigosPermitidos = {
   "INE11": { adultos: 1, ninos: 0 },
   "INE12": { adultos: 2, ninos: 0 },
+  "INEN21": { adultos: 2, ninos: 1 },
   "INV11": { adultos: 1, ninos: 0 },
   "INV12": { adultos: 2, ninos: 0 },  
   "INV13": { adultos: 3, ninos: 0 },
@@ -182,6 +183,7 @@ const codigosPermitidos = {
   "INVN31": { adultos: 3, ninos: 1 },
   "INVN33": { adultos: 3, ninos: 3 },
   "INVN42": { adultos: 4, ninos: 2 },
+  "INVN82": { adultos: 8, ninos: 2 },
   "VIP12": { adultos: 2, ninos: 0 },
   "VIP13": { adultos: 3, ninos: 0 },
   "VIP14": { adultos: 4, ninos: 0 },
