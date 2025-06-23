@@ -184,6 +184,7 @@ const codigosPermitidos = {
   "INVN33": { adultos: 3, ninos: 3 },
   "INVN42": { adultos: 4, ninos: 2 },
   "INVN82": { adultos: 8, ninos: 2 },
+  "INVN82": { adultos: 9, ninos: 3 },
   "VIP12": { adultos: 2, ninos: 0 },
   "VIP13": { adultos: 3, ninos: 0 },
   "VIP14": { adultos: 4, ninos: 0 },
