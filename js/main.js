@@ -193,7 +193,8 @@ const codigosPermitidos = {
   "VIPN21": { adultos: 2, ninos: 1 },
   "VIPN41": { adultos: 4, ninos: 1 },
   "VIPN51": { adultos: 5, ninos: 1 },
-  "VIPN22": { adultos: 2, ninos: 2 }
+  "VIPN22": { adultos: 2, ninos: 2 },
+  "VIPN81": { adultos: 8, ninos: 1 }
 };
 
   const codigoInput = document.getElementById("codigo");
